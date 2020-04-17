@@ -1,0 +1,40 @@
+body{
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+.mainDiv{
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+.nav{
+    position: absolute;
+    top: 0;
+    height: 220px;
+    width: 220px;
+    transform: rotate(-45deg) translateY(-155px);
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.nav a{
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    background: black;
+    color: snow;
+    letter-spacing: 0.1rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    transition: all 0.3s;
+}
+
+.nav a:hover{
+    background: silver;
+    color: black;    
+    letter-spacing: 0.3rem;
+}

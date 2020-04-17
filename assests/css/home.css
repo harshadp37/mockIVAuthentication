@@ -1,0 +1,37 @@
+.home{
+    width: inherit;
+    height: inherit;
+    background-image: url('/images/background.jpeg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.home .btns{
+    width: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.home .btns a{
+    width: fit-content;
+    text-decoration: none;
+    display: block;
+    font-size: 1.8rem;
+    color: #ffffff;
+    background: #3d860e;
+    padding: 15px 30px;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.home .btns a:hover{
+    background: #6ad821;
+    color: black;
+    font-size: 1.9rem;
+}

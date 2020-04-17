@@ -1,0 +1,15 @@
+
+<link rel='stylesheet' type='text/css' href='/css/home.css'>
+
+<div class="home">
+    <div class="btns">
+        <% if(locals.user){ %>
+            <a type="button" onclick="sendResetLink('<%= locals.user.email %>')">Reset Password</a>
+            <a type="button" href="/user/sign-out">Sign Out</a>
+        <% }else{ %>
+            <a type="button" href="/user/sign-in">Sign In</a>
+            <a type="button" href="/user/sign-up">Sign Up</a>
+        <% } %>
+        
+    </div>
+</div>
