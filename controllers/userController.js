@@ -3,8 +3,9 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('./../config/config');
-const passwordResetWorker = require('./../workers/passwordResetWorker');
 const agenda = require('../config/agenda');
+require('./../workers/passwordResetWorker');
+require('./../workers/accountVerificationWorker');
 const recaptcha = require('./../config/captchaConfig');
 
 module.exports.signIn = async (req, res)=>{
@@ -40,6 +41,11 @@ module.exports.forgotPassword = (req, res)=>{
 
 module.exports.register = async (req, res)=>{
     try {
+        // IF USER IS SIGN IN ALREADY THEN REDIRECT TO HOME
+        if(req.isAuthenticated()){
+            return res.redirect('/');
+        }
+
         /* EMAIL ID AND PASSWORD REQUIRED */
         if(!req.body.email || !req.body.password){
             throw new Error("All Fields(Email & Password) Required.");
@@ -63,11 +69,18 @@ module.exports.register = async (req, res)=>{
         const salt = bcrypt.genSaltSync(10);
         const hash = await bcrypt.hashSync(req.body.password, salt);
 
+        // CREATE NEW ACCOUNT VERIFICATION TOKEN
+        const accountVerificationToken = jwt.sign({email: req.body.email}, config.secret, {expiresIn: '1h'})
+
         /* CREATE USER */
         await User.create({
             email: req.body.email,
-            password: hash
+            password: hash,
+            accountVerificationToken: accountVerificationToken
         })
+
+        const job = agenda.create('accountVerificationMail', {email: req.body.email, accountVerificationToken: accountVerificationToken});
+        await job.save();
 
         /* SUCCESS RESPONSE */
         return res.json({success: true, message: "User Created Successfully!!"});
@@ -83,6 +96,11 @@ module.exports.register = async (req, res)=>{
 }
 
 module.exports.login = (req, res, next)=>{
+    // IF USER IS SIGN IN ALREADY THEN REDIRECT TO HOME
+    if(req.isAuthenticated()){
+        return res.redirect('/');
+    }
+
     /* EMAIL ID AND PASSWORD REQUIRED */
     if(!req.body.email || !req.body.password){
         return res.json({success: false, message: 'All Fields(Email & Password) Required.'});
@@ -151,7 +169,7 @@ module.exports.sendResetLink = async (req, res)=>{
     }
 }
 
-module.exports.verifyToken = async (req, res) => {
+module.exports.verifyResetToken = async (req, res) => {
     try {
         // VERIFY RESET TOKEN
         const decoded = await jwt.verify(req.params.token, config.secret);
@@ -164,7 +182,7 @@ module.exports.verifyToken = async (req, res) => {
         const user = await User.findById(decoded._id);
 
         // IF PASSWORD RESET TOKEN IN DATABASE IS NULL THEN THROW ERROR
-        if(!user || !user.passwordResetToken){
+        if(!user || !user.passwordResetToken || user.passwordResetToken != req.params.token){
             throw new Error("Bad Token.");
         }
 
@@ -174,6 +192,48 @@ module.exports.verifyToken = async (req, res) => {
         /* ERROR RESPONSE */
         console.error("Error while Verifying Password Reset Link " + e);
         return res.redirect('/');
+    } 
+}
+
+module.exports.verifyAccountToken = async (req, res) => {
+    try {
+        // VERIFY RESET TOKEN
+        const decoded = await jwt.verify(req.params.token, config.secret);
+        
+        if(!decoded.email){
+            throw new Error("Bad Token.");
+        }
+
+        // GET USER USING ID PRESENT IN TOKEN
+        const user = await User.findOne({email: decoded.email});
+        if(!user){
+            throw new Error("Bad Token.");
+        }
+
+        if(user.verified){
+            /* SUCCESS RESPONSE */
+            user.accountVerificationToken = null;
+            user.verified = true;
+            await user.save();
+            return res.render('account-verified', {title: "Account Verification", accountVerificationResponse: "Account is Already Verified."});
+        }
+
+        // IF ACCOUNT VERIFICATION TOKEN IN DATABASE IS NULL THEN THROW ERROR
+        if(!user.accountVerificationToken || user.accountVerificationToken != req.params.token){
+            throw new Error("Bad Token");
+        }
+
+        // IF TOKEN IS VERIFIED THEN UPDATE THE USER
+        user.accountVerificationToken = null;
+        user.verified = true;
+        await user.save();
+
+        /* SUCCESS RESPONSE */
+        return res.render('account-verified', {title: "Account Verification", accountVerificationResponse: "Account has been Verified."});
+    } catch (e) {
+        /* ERROR RESPONSE */
+        console.error("Error while Verifying Account Verification Link " + e);
+        return res.render('account-verified', {title: "Account Verification", accountVerificationResponse: "Bad Token."})
     } 
 }
 

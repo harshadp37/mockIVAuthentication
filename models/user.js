@@ -26,6 +26,13 @@ const userSchema = new mongoose.Schema({
     passwordResetToken: {
         type: String,
         default: null
+    },
+    accountVerificationToken : {
+        type: String
+    },
+    verified: {
+        type: Boolean,
+        default: false
     }
 })
 

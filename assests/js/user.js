@@ -26,11 +26,13 @@ $('.sign-up-form button[type=submit]').click(function(e){
             }else{
                 $("body").css('cursor', 'default')
                 $('.error').text(result.message)
+                grecaptcha.reset($('.g-recaptcha'))
             }
         },
         error: (error)=>{
             $("body").css('cursor', 'default')
             console.log(error)
+            grecaptcha.reset($('.g-recaptcha'))
         }
     })
 })
@@ -58,11 +60,13 @@ $('.sign-in-form button[type=submit]').click(function(e){
             }else{
                 $("body").css('cursor', 'default')
                 $('.error').text(result.message)
+                grecaptcha.reset($('.g-recaptcha'))
             }
         },
         error: (error)=>{
             $("body").css('cursor', 'default')
             console.log(error)
+            grecaptcha.reset($('.g-recaptcha'))
         }
     })
 })

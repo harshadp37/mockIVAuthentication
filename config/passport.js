@@ -19,6 +19,9 @@ passport.use(new LocalStrategy({
             if (!user.validPassword(password)) {
                 return done(null, false, { message: 'Wrong Credentials.' });
             }
+            if(!user.verified){
+                return done(null, false, { message: 'Email ID is not Verified.' });
+            }
             return done(null, user);
         })
     }

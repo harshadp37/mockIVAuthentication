@@ -12,7 +12,10 @@ router.get('/sign-out', userController.signOut);
 router.get('/forgot-password', userController.forgotPassword);
 
 // SEND RESET PASSWORD TEMPLATE BY VERIFYING TOKEN
-router.get('/password-reset/:token', userController.verifyToken);
+router.get('/password-reset/:token', userController.verifyResetToken);
+
+// SEND RESET PASSWORD TEMPLATE BY VERIFYING TOKEN
+router.get('/account-verification/:token', userController.verifyAccountToken);
 
 // SIGN UP AND SIGN IN FOR USER
 router.post('/sign-in', recaptcha.middleware.verify, userController.login);

@@ -18,7 +18,7 @@ module.exports.sendResetLink = async (data)=>{
         html: passwordResetTemplate
     }, (err, info)=>{
         if(err){
-            console.log("Error While Sending Mail. " + err);
+            console.log("Error While Sending Reset Password Mail. " + err);
         }else{
             console.log("Message Sent. " + info);
         }
