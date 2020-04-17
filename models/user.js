@@ -36,6 +36,7 @@ const userSchema = new mongoose.Schema({
     }
 })
 
+// CHECK PASSWORD WITH DATABASE HASH WHILE SIGNING IN
 userSchema.methods.validPassword = function (password) {
     return bcrypt.compareSync(password, this.password);
 }

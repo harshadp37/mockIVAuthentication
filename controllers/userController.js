@@ -7,6 +7,7 @@ const agenda = require('../config/agenda');
 require('./../workers/passwordResetWorker');
 require('./../workers/accountVerificationWorker');
 
+// SEND SIGN IN TEMPLATE
 module.exports.signIn = async (req, res)=>{
     // IF USER IS SIGN IN ALREADY THEN REDIRECT TO HOME
     if(req.isAuthenticated()){
@@ -15,6 +16,7 @@ module.exports.signIn = async (req, res)=>{
     return res.render('sign-in', {title: "Sign In", captcha: res.recaptcha});
 }
 
+// SEND SIGN UP TEMPLATE
 module.exports.signUp = (req, res)=>{
     // IF USER IS SIGN IN ALREADY THEN REDIRECT TO HOME
     if(req.isAuthenticated()){
@@ -23,6 +25,7 @@ module.exports.signUp = (req, res)=>{
     return res.render('sign-up', {title: "Sign Up"});
 }
 
+// SIGN OUT
 module.exports.signOut = (req, res)=>{
     if(req.isAuthenticated()){
         req.logout();
@@ -30,6 +33,7 @@ module.exports.signOut = (req, res)=>{
     return res.redirect('/');
 }
 
+// SEND FORGOT PASSWORD TEMPLATE
 module.exports.forgotPassword = (req, res)=>{
     // IF USER IS SIGN IN ALREADY THEN REDIRECT TO HOME
     if(req.isAuthenticated()){
@@ -38,6 +42,7 @@ module.exports.forgotPassword = (req, res)=>{
     return res.render('forgot-password', {title: "Forgot Password"});
 }
 
+// SEND ACCOUNT VERIFICATION TEMPLATE
 module.exports.accountVerification = (req, res)=>{
     // IF USER IS SIGN IN ALREADY THEN REDIRECT TO HOME
     if(req.isAuthenticated()){
@@ -46,6 +51,7 @@ module.exports.accountVerification = (req, res)=>{
     return res.render('account-verification', {title: "Account Verification"});
 }
 
+// REGISTER USER USING EMAIL AND SEND ACCOUNT VERIFICATION LINK
 module.exports.register = async (req, res)=>{
     try {
         // IF USER IS SIGN IN ALREADY THEN REDIRECT TO HOME
@@ -102,6 +108,7 @@ module.exports.register = async (req, res)=>{
     }
 }
 
+// LOGIN USER USING CREDENTIALS
 module.exports.login = (req, res, next)=>{
     // IF USER IS SIGN IN ALREADY THEN REDIRECT TO HOME
     if(req.isAuthenticated()){
@@ -137,6 +144,7 @@ module.exports.login = (req, res, next)=>{
     })(req, res, next);
 }
 
+//SEND PASSWORD RESET LINK TO EMAIL ID WHICH IS VALID FOR 30 MINUTES
 module.exports.sendResetLink = async (req, res)=>{
     try {
         /* EMAIL ID REQUIRED */
@@ -176,6 +184,7 @@ module.exports.sendResetLink = async (req, res)=>{
     }
 }
 
+//SEND ACCOUNT VERIFICATION LINK TO EMAIL ID WHICH IS VALID FOR 1 HOUR
 module.exports.sendAccountVerificationLink = async (req, res)=>{
     try {
         /* EMAIL ID REQUIRED */
@@ -216,6 +225,7 @@ module.exports.sendAccountVerificationLink = async (req, res)=>{
     }
 }
 
+// VERIFY PASSWORD RESET TOKEN AND SEND RESET PASSWORD TEMPLATE
 module.exports.verifyResetToken = async (req, res) => {
     try {
         // VERIFY RESET TOKEN
@@ -242,6 +252,7 @@ module.exports.verifyResetToken = async (req, res) => {
     } 
 }
 
+// VERIFY ACCOUNT VERIFICATION TOKEN AND MAKE ACCOUNT AS VERIFIED
 module.exports.verifyAccountToken = async (req, res) => {
     try {
         // VERIFY RESET TOKEN
@@ -284,6 +295,7 @@ module.exports.verifyAccountToken = async (req, res) => {
     } 
 }
 
+// VERIFY PASSWORD RESET TOKEN AND CHANGE PASSWORD OF USER
 module.exports.changePassword = async (req, res) => {
     try {
         /* PASSWORD REQUIRED */
