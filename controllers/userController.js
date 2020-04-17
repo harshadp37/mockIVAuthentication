@@ -5,13 +5,14 @@ const jwt = require('jsonwebtoken');
 const config = require('./../config/config');
 const passwordResetWorker = require('./../workers/passwordResetWorker');
 const agenda = require('../config/agenda');
+const recaptcha = require('./../config/captchaConfig');
 
-module.exports.signIn = (req, res)=>{
+module.exports.signIn = async (req, res)=>{
     // IF USER IS SIGN IN ALREADY THEN REDIRECT TO HOME
     if(req.isAuthenticated()){
         return res.redirect('/');
     }
-    return res.render('sign-in', {title: "Sign In"});
+    return res.render('sign-in', {title: "Sign In", captcha: res.recaptcha});
 }
 
 module.exports.signUp = (req, res)=>{
@@ -43,6 +44,12 @@ module.exports.register = async (req, res)=>{
         if(!req.body.email || !req.body.password){
             throw new Error("All Fields(Email & Password) Required.");
         }
+
+        // CATCH CAPTCHA ERROR
+        if(req.recaptcha.error){
+            return res.json({success: false, message: 'Invalid Captcha.'});
+        }
+        
         /* GET USER WITH THE HELP OF EAMIL */
         const user = await User.findOne({email: req.body.email});
 
@@ -76,10 +83,14 @@ module.exports.register = async (req, res)=>{
 }
 
 module.exports.login = (req, res, next)=>{
-    
     /* EMAIL ID AND PASSWORD REQUIRED */
     if(!req.body.email || !req.body.password){
         return res.json({success: false, message: 'All Fields(Email & Password) Required.'});
+    }
+
+    // CATCH CAPTCHA ERROR
+    if(req.recaptcha.error){
+        return res.json({success: false, message: 'Invalid Captcha.'});
     }
 
     /* AUTHENTICATE USER USING PASSPORT */

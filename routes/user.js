@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('./../controllers/userController');
+const recaptcha = require('./../config/captchaConfig');
 
 // SEND SIGN UP, SIGN IN, SING OUT TEMPLATES
-router.get('/sign-up', userController.signUp);
 router.get('/sign-in', userController.signIn);
+router.get('/sign-up', userController.signUp);
 router.get('/sign-out', userController.signOut);
 
 // SEND FORGOT PASSWORD TEMPLATE
@@ -14,8 +15,8 @@ router.get('/forgot-password', userController.forgotPassword);
 router.get('/password-reset/:token', userController.verifyToken);
 
 // SIGN UP AND SIGN IN FOR USER
-router.post('/sign-up', userController.register);
-router.post('/sign-in', userController.login);
+router.post('/sign-in', recaptcha.middleware.verify, userController.login);
+router.post('/sign-up', recaptcha.middleware.verify, userController.register);
 
 // SEND RESET PASSWORD TOKEN USING MAIL
 router.post('/forgot-password', userController.sendResetLink);

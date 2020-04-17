@@ -42,7 +42,7 @@ $('.sign-in-form button[type=submit]').click(function(e){
     $('.error').text("")
 
     $("body").css('cursor', 'wait')
-
+    
     // REQUEST TO "/user/sign-in"
     $.ajax({
         method: 'POST',
