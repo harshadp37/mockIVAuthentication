@@ -191,6 +191,11 @@ module.exports.sendAccountVerificationLink = async (req, res)=>{
             throw new Error("Email ID is not registered.")
         }
 
+        if(user.verified){
+            /* SUCCESS RESPONSE */
+            return res.json({success: true, message: "Account is already Verified."});
+        }
+        
         // CREATE NEW ACCOUNT VERIFICATION TOKEN
         const accountVerificationToken = jwt.sign({email: req.body.email}, config.secret, {expiresIn: '1h'})
 

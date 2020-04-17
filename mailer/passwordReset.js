@@ -20,7 +20,8 @@ module.exports.sendResetLink = async (data)=>{
         if(err){
             console.log("Error While Sending Reset Password Mail. " + err);
         }else{
-            console.log("Message Sent. " + info);
+            console.log("Mail Sent.");
+            console.log(info);
         }
     })
 }

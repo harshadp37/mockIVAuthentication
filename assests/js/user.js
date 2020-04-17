@@ -51,7 +51,6 @@ $('.sign-in-form button[type=submit]').click(function(e){
         url: '/user/sign-in',
         data: $('.sign-in-form').serialize(),
         success: (result)=>{
-            console.log(result)
             if(result.success){
                 $('.success').text(result.message + "...Redirecting")
                 setTimeout(()=>{

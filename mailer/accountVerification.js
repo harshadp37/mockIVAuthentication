@@ -20,7 +20,8 @@ module.exports.sendVerificationLink = async (data)=>{
         if(err){
             console.log("Error While Sending Account Verification Mail. " + err);
         }else{
-            console.log("Message Sent. " + info);
+            console.log("Mail Sent.");
+            console.log(info);
         }
     })
 }
