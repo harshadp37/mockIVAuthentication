@@ -20,7 +20,7 @@ passport.use(new LocalStrategy({
                 return done(null, false, { message: 'Wrong Credentials.' });
             }
             if(!user.verified){
-                return done(null, false, { message: 'Email ID is not Verified.' });
+                return done(null, false, { message: 'Email ID is not Verified.', verified: false });
             }
             return done(null, user);
         })

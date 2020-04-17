@@ -1,0 +1,27 @@
+
+<link rel='stylesheet' type='text/css' href='/css/accountVerification.css'>
+
+<div class="accountVerificationDiv">
+
+    <div class="accountVerificationModal">
+
+        <div class="header">
+            <span>Account Verification</span>
+        </div>
+
+        <div class="body">
+            <!-- ERROR AND SUCCESS NOTIFICATION -->
+            <span class="error"></span>
+            <span class="success"></span>
+            
+            <!-- ACCOUNT VERIFICATION FORM -->
+            <form class="account-verification-form" method="POST" action="/user/account-verification">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter Email..." required/>
+                
+                <button type="submit">Send Verification Link</button>
+            </form>
+        </div>
+
+    </div>
+</div>

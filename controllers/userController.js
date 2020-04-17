@@ -6,7 +6,6 @@ const config = require('./../config/config');
 const agenda = require('../config/agenda');
 require('./../workers/passwordResetWorker');
 require('./../workers/accountVerificationWorker');
-const recaptcha = require('./../config/captchaConfig');
 
 module.exports.signIn = async (req, res)=>{
     // IF USER IS SIGN IN ALREADY THEN REDIRECT TO HOME
@@ -37,6 +36,14 @@ module.exports.forgotPassword = (req, res)=>{
         return res.redirect('/');
     }
     return res.render('forgot-password', {title: "Forgot Password"});
+}
+
+module.exports.accountVerification = (req, res)=>{
+    // IF USER IS SIGN IN ALREADY THEN REDIRECT TO HOME
+    if(req.isAuthenticated()){
+        return res.redirect('/');
+    }
+    return res.render('account-verification', {title: "Account Verification"});
 }
 
 module.exports.register = async (req, res)=>{
@@ -83,7 +90,7 @@ module.exports.register = async (req, res)=>{
         await job.save();
 
         /* SUCCESS RESPONSE */
-        return res.json({success: true, message: "User Created Successfully!!"});
+        return res.json({success: true, message: "User Created Successfully!!...Check Email ID for verification Link."});
 
     } catch (e) {
         /* ERROR RESPONSE */
@@ -117,7 +124,7 @@ module.exports.login = (req, res, next)=>{
             return res.json({success: false, message: 'Something went wrong.'});
         }
         if(!user){
-            return res.json({success: false, message: info.message});
+            return res.json({success: false, message: info.message, verified: info.verified});
         }
         /* LOGIN USER IF EVERYTHING IS CORRECT */
         req.login(user, (err)=>{
@@ -165,6 +172,41 @@ module.exports.sendResetLink = async (req, res)=>{
     } catch (e) {
         /* ERROR RESPONSE */
         console.error("Error while Sending Password Reset Link " + e);
+        return res.json({success: false, message: e.message});
+    }
+}
+
+module.exports.sendAccountVerificationLink = async (req, res)=>{
+    try {
+        /* EMAIL ID REQUIRED */
+        if(!req.body.email){
+            throw new Error("Email ID Required.");
+        }
+        /* GET USER WITH THE HELP OF EAMIL */
+        const user = await User.findOne({email: req.body.email});
+
+        /* IF USER IS NOT EXISTS THEN ABORT OPERATION */
+        if(!user){
+            console.error("Email ID is not registered.");
+            throw new Error("Email ID is not registered.")
+        }
+
+        // CREATE NEW ACCOUNT VERIFICATION TOKEN
+        const accountVerificationToken = jwt.sign({email: req.body.email}, config.secret, {expiresIn: '1h'})
+
+        user.accountVerificationToken = accountVerificationToken;
+        user.verified = false;
+        await user.save();
+
+        const job = agenda.create('accountVerificationMail', {email: req.body.email, accountVerificationToken: accountVerificationToken});
+        await job.save();
+
+        /* SUCCESS RESPONSE */
+        return res.json({success: true, message: "Account Verification Link has been sent to your Email ID which is valid only for 1h."});
+
+    } catch (e) {
+        /* ERROR RESPONSE */
+        console.error("Error while Sending Account Verification Link " + e);
         return res.json({success: false, message: e.message});
     }
 }

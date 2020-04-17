@@ -51,6 +51,7 @@ $('.sign-in-form button[type=submit]').click(function(e){
         url: '/user/sign-in',
         data: $('.sign-in-form').serialize(),
         success: (result)=>{
+            console.log(result)
             if(result.success){
                 $('.success').text(result.message + "...Redirecting")
                 setTimeout(()=>{
@@ -59,7 +60,12 @@ $('.sign-in-form button[type=submit]').click(function(e){
                 }, 3000)
             }else{
                 $("body").css('cursor', 'default')
-                $('.error').text(result.message)
+                if(result.verified == false){
+                    $('.error').html(result.message + ' <a style="display: inline;" href="/user/account-verification">Click Here</a> to send verification Mail.')
+                    
+                }else{
+                    $('.error').text(result.message)
+                }
                 grecaptcha.reset($('.g-recaptcha'))
             }
         },
@@ -89,6 +95,39 @@ $('.forgot-password-form button[type=submit]').click(function(e){
                 $('.success').text(result.message)
                 $(".forgot-password-form input").prop("disabled", true);
                 $(".forgot-password-form button").prop("disabled", true);
+                setTimeout(()=>{
+                    $("body").css('cursor', 'default')
+                }, 3000)
+            }else{
+                $("body").css('cursor', 'default')
+                $('.error').text(result.message)
+            }
+        },
+        error: (error)=>{
+            $("body").css('cursor', 'default')
+            console.log(error)
+        }
+    })
+})
+
+// ACCOUNT VERIFICATION FORM BUTTON CLICK
+$('.account-verification-form button[type=submit]').click(function(e){
+    e.preventDefault();
+    $('.success').text("")
+    $('.error').text("")
+
+    $("body").css('cursor', 'wait')
+
+    // REQUEST TO "/user/account-verification"
+    $.ajax({
+        method: 'POST',
+        url: '/user/account-verification',
+        data: $('.account-verification-form').serialize(),
+        success: (result)=>{
+            if(result.success){
+                $('.success').text(result.message)
+                $(".account-verification-form input").prop("disabled", true);
+                $(".account-verification-form button").prop("disabled", true);
                 setTimeout(()=>{
                     $("body").css('cursor', 'default')
                 }, 3000)
@@ -146,7 +185,7 @@ $('.reset-password-form button[type=submit]').click(function(e){
     })
 })
 
-// PASSWORD RESET DIRECTLY USING EMAIL WHEN USER IS ALREADY SIGNED IN
+// PASSWORD RESET DIRECTLY USING LOGGED IN EMAIL ID WHEN USER IS ALREADY LOGGED IN
 function sendResetLink(email){
     $("body").css('cursor', 'wait')
     
