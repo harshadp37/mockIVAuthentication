@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const validate = require('mongoose-validator');
 
+// EMAIL VALIDATOR
 var emailValidator = [
     validate({
         validator: 'isEmail',
@@ -9,6 +10,8 @@ var emailValidator = [
     })
 ]
 
+// USER SCHEMA
+// FIELDS : EMAIL, PASSWORD, PASSWORD_RESET_TOKEN
 const userSchema = new mongoose.Schema({
     email:{
         type: String,

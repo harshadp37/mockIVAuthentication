@@ -9,6 +9,7 @@
     align-items: center;
 }
 
+/* SIGN IN MODAL */
 .signInModal{
     width: 30%;
     display: flex;
@@ -19,6 +20,7 @@
     border-radius: 10px;
 }
 
+/* SIGN IN MODAL HEADER */
 .signInModal .header{
     width: 100%;
     font-size: 1.5rem;
@@ -30,6 +32,7 @@
     border-top-right-radius: 10px;
 }
 
+/* SIGN IN MODAL BODY */
 .signInModal .body{
     width: 100%;
     display: flex;
@@ -57,6 +60,7 @@
     font-weight: 600;
 }
 
+/* SIGN IN FORM */
 .signInModal .body form{
     width: 60%;
     display: flex;
@@ -102,6 +106,7 @@
     color: white;
 }
 
+/* SIGN IN MODAL FOOTER */
 .signInModal .footer{
     width: 100%;
     text-align: center;

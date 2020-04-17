@@ -9,6 +9,7 @@
     align-items: center;
 }
 
+/* SIGN UP MODAL */
 .signUpModal{
     width: 30%;
     display: flex;
@@ -19,6 +20,7 @@
     border-radius: 10px;
 }
 
+/* SIGN UP MODAL HEADER */
 .signUpModal .header{
     width: 100%;
     font-size: 1.5rem;
@@ -30,6 +32,7 @@
     border-top-right-radius: 10px;
 }
 
+/* SIGN UP MODAL BODY */
 .signUpModal .body{
     width: 100%;
     display: flex;
@@ -57,6 +60,7 @@
     font-weight: 600;
 }
 
+/* SIGN UP FORM */
 .signUpModal .body form{
     width: 60%;
     display: flex;
@@ -96,6 +100,7 @@
     cursor: pointer;
 }
 
+/* SIGN UP MODAL FOOTER */
 .signUpModal .footer{
     width: 100%;
     text-align: center;

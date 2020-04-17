@@ -3,6 +3,7 @@
 
 <div class="home">
     <div class="btns">
+        <!-- SHOW RESET PASSWORD AND SIGN OUT WHEN USER IS PRESENT i.e. WHEN USER IS LOGGED IN -->
         <% if(locals.user){ %>
             <a type="button" onclick="sendResetLink('<%= locals.user.email %>')">Reset Password</a>
             <a type="button" href="/user/sign-out">Sign Out</a>

@@ -1,3 +1,4 @@
+// SIGN UP FORM BUTTON CLICK
 $('.sign-up-form button[type=submit]').click(function(e){
     e.preventDefault();
     
@@ -9,6 +10,8 @@ $('.sign-up-form button[type=submit]').click(function(e){
         return;
     }
     $("body").css('cursor', 'wait')
+
+    // REQUEST TO "/user/sign-up"
     $.ajax({
         method: 'POST',
         url: '/user/sign-up',
@@ -32,12 +35,15 @@ $('.sign-up-form button[type=submit]').click(function(e){
     })
 })
 
+// SIGN IN FORM BUTTON CLICK
 $('.sign-in-form button[type=submit]').click(function(e){
     e.preventDefault();
     $('.success').text("")
     $('.error').text("")
 
     $("body").css('cursor', 'wait')
+
+    // REQUEST TO "/user/sign-in"
     $.ajax({
         method: 'POST',
         url: '/user/sign-in',
@@ -61,12 +67,15 @@ $('.sign-in-form button[type=submit]').click(function(e){
     })
 })
 
+// FORGOT PASSWORD FORM BUTTON CLICK
 $('.forgot-password-form button[type=submit]').click(function(e){
     e.preventDefault();
     $('.success').text("")
     $('.error').text("")
 
     $("body").css('cursor', 'wait')
+
+    // REQUEST TO "/user/forgot-password"
     $.ajax({
         method: 'POST',
         url: '/user/forgot-password',
@@ -91,6 +100,7 @@ $('.forgot-password-form button[type=submit]').click(function(e){
     })
 })
 
+// RESET PASSWORD FORM BUTTON CLICK
 $('.reset-password-form button[type=submit]').click(function(e){
     e.preventDefault();
     $('.success').text("")
@@ -101,9 +111,12 @@ $('.reset-password-form button[type=submit]').click(function(e){
         return;
     }
 
+    // GET TOKEN FROM URL
     const token = window.location.pathname.split('/')[3];
 
     $("body").css('cursor', 'wait')
+    
+    // REQUEST TO "/user/password-reset/:token"
     $.ajax({
         method: 'POST',
         url: '/user/password-reset/' + token,
@@ -129,8 +142,11 @@ $('.reset-password-form button[type=submit]').click(function(e){
     })
 })
 
+// PASSWORD RESET DIRECTLY USING EMAIL WHEN USER IS ALREADY SIGNED IN
 function sendResetLink(email){
     $("body").css('cursor', 'wait')
+    
+    // REQUEST TO "/user/forgot-password"
     $.ajax({
         method: 'POST',
         url: '/user/forgot-password',
@@ -140,7 +156,7 @@ function sendResetLink(email){
                 setTimeout(()=>{
                     $("body").css('cursor', 'default')
                     document.location.href = '/user/password-reset/' + result.resetToken
-                }, 2000)
+                }, 1000)
             }else{
                 $("body").css('cursor', 'default')
                 $('.error').text(result.message)

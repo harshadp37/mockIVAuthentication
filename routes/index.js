@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 
+/* HOME ROUTE */
 router.get('/', (req, res)=>{
-    console.log(req.session)
-    return res.render('home')
+    return res.render('home', {title: "Home"})
 })
 
-/* USER ROUTES */
+/* USERS ROUTES */
 router.use('/user', require('./user'))
 
 module.exports = router;

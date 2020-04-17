@@ -2,11 +2,13 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var User = require('./../models/user');
 
+// AUTHENTICATE USING PASSPORT LOCAL STRATEGY
 passport.use(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password'
 },
     function (email, password, done) {
+        // GET USER USING EMAIL
         User.findOne({ email: email }, function (err, user) {
             if (err) {
                 return done(err);
@@ -32,6 +34,7 @@ passport.deserializeUser(function (id, done) {
     });
 });
 
+// SET USER IN LOCALS
 passport.setUser = (req, res, next)=>{
     if(req.isAuthenticated()){
         let user = {

@@ -2,14 +2,19 @@
 <link rel='stylesheet' type='text/css' href='/css/signUp.css'>
 
 <div class="signUpDiv">
+
     <div class="signUpModal">
+
         <div class="header">
             <span>Sign Up</span>
         </div>
+
         <div class="body">
+            <!-- ERROR AND SUCCESS NOTIFICATION -->
             <span class="error"></span>
             <span class="success"></span>
             
+            <!-- SIGN UP FORM -->
             <form class="sign-up-form" method="POST" action="/user/sign-up">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="Enter Email..." />
@@ -21,8 +26,10 @@
                 <button type="submit">Sign Up</button>
             </form>
         </div>
+
         <div class="footer">
             <span>Already have an Account.? <a href="/user/sign-In" style="text-decoration: none;">Sign In</a></span>
         </div>
+        
     </div>
 </div>

@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const mailCredentials = require('./mailCredentials');
 
+// SETUP FOR TRANSPORTER TO SEND MAIL
 let transporter = nodemailer.createTransport({
     service: 'gmail',
     host: "smtp.gmail.com",

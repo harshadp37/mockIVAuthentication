@@ -6,17 +6,19 @@ const config = require('./../config/config');
 const passwordResetMailer = require('./../mailer/passwordReset');
 
 module.exports.signIn = (req, res)=>{
+    // IF USER IS SIGN IN ALREADY THEN REDIRECT TO HOME
     if(req.isAuthenticated()){
         return res.redirect('/');
     }
-    return res.render('sign-in');
+    return res.render('sign-in', {title: "Sign In"});
 }
 
 module.exports.signUp = (req, res)=>{
+    // IF USER IS SIGN IN ALREADY THEN REDIRECT TO HOME
     if(req.isAuthenticated()){
         return res.redirect('/');
     }
-    return res.render('sign-up');
+    return res.render('sign-up', {title: "Sign Up"});
 }
 
 module.exports.signOut = (req, res)=>{
@@ -27,10 +29,11 @@ module.exports.signOut = (req, res)=>{
 }
 
 module.exports.forgotPassword = (req, res)=>{
+    // IF USER IS SIGN IN ALREADY THEN REDIRECT TO HOME
     if(req.isAuthenticated()){
         return res.redirect('/');
     }
-    return res.render('forgot-password');
+    return res.render('forgot-password', {title: "Forgot Password"});
 }
 
 module.exports.register = async (req, res)=>{
@@ -99,7 +102,7 @@ module.exports.login = (req, res, next)=>{
 
 module.exports.sendResetLink = async (req, res)=>{
     try {
-        /* EMAIL ID AND PASSWORD REQUIRED */
+        /* EMAIL ID REQUIRED */
         if(!req.body.email){
             throw new Error("Email ID Required.");
         }
@@ -112,15 +115,18 @@ module.exports.sendResetLink = async (req, res)=>{
             throw new Error("Email ID is not registered.")
         }
 
+        // CREATE RESET TOKEN USING USER ID AND SAVE IT IN DATABASE
         const resetToken = jwt.sign({_id: user._id}, config.secret, {expiresIn: '30m'});
 
         user.passwordResetToken = resetToken;
         await user.save();
 
+        // IF USER IS SIGN IN THEN SEND RESET TOKEN IN RESPONSE ELSE SEND RESET TOKEN USING MAIL
         if(req.isAuthenticated()){
             return res.json({success: true, resetToken: resetToken});
         }
         await passwordResetMailer.sendResetLink({email: user.email, resetToken: resetToken});
+
         /* SUCCESS RESPONSE */
         return res.json({success: true, message: "Password Link has been sent to your Email ID which is valid only for 30m."});
 
@@ -133,20 +139,23 @@ module.exports.sendResetLink = async (req, res)=>{
 
 module.exports.verifyToken = async (req, res) => {
     try {
+        // VERIFY RESET TOKEN
         const decoded = await jwt.verify(req.params.token, config.secret);
 
         if(!decoded._id){
             throw new Error("Bad Token.");
         }
 
+        // GET USER USING ID PRESENT IN TOKEN
         const user = await User.findById(decoded._id);
 
+        // IF PASSWORD RESET TOKEN IN DATABASE IS NULL THEN THROW ERROR
         if(!user || !user.passwordResetToken){
             throw new Error("Bad Token.");
         }
 
         /* SUCCESS RESPONSE */
-        return res.render('reset-password', {_id: user._id, email: user.email});
+        return res.render('reset-password', {title: "Reset Password", _id: user._id, email: user.email});
     } catch (e) {
         /* ERROR RESPONSE */
         console.error("Error while Verifying Password Reset Link " + e);
@@ -156,10 +165,12 @@ module.exports.verifyToken = async (req, res) => {
 
 module.exports.changePassword = async (req, res) => {
     try {
-        /* EMAIL ID AND PASSWORD REQUIRED */
+        /* PASSWORD REQUIRED */
         if(!req.body.password){
             throw new Error("Password Required.");
         }
+        
+        // VERIFY RESET TOKEN
         const decoded = await jwt.verify(req.params.token, config.secret);
 
         if(!decoded._id){
@@ -171,11 +182,12 @@ module.exports.changePassword = async (req, res) => {
         if(!user){
             throw new Error("Bad Token.");
         }
-        /* IF USER NOT EXISTS THEN CREATE HASH FOR PASSWORD */
+
+        /* IF USER EXISTS THEN CREATE HASH FOR PASSWORD */
         const salt = bcrypt.genSaltSync(10);
         const hash = await bcrypt.hashSync(req.body.password, salt);
 
-        /* UPDATE USER PASSWORD */
+        /* UPDATE USER PASSWORD AND SET PASSWORD RESET TOKEN TO NULL */
         user.passwordResetToken = null;
         user.password = hash;
 
