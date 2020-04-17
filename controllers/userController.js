@@ -3,7 +3,8 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('./../config/config');
-const passwordResetMailer = require('./../mailer/passwordReset');
+const passwordResetWorker = require('./../workers/passwordResetWorker');
+const agenda = require('../config/agenda');
 
 module.exports.signIn = (req, res)=>{
     // IF USER IS SIGN IN ALREADY THEN REDIRECT TO HOME
@@ -125,7 +126,9 @@ module.exports.sendResetLink = async (req, res)=>{
         if(req.isAuthenticated()){
             return res.json({success: true, resetToken: resetToken});
         }
-        await passwordResetMailer.sendResetLink({email: user.email, resetToken: resetToken});
+
+        const job = agenda.create('resetTokenMail', {email: user.email, resetToken: resetToken});
+        await job.save();
 
         /* SUCCESS RESPONSE */
         return res.json({success: true, message: "Password Link has been sent to your Email ID which is valid only for 30m."});

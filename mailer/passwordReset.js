@@ -12,9 +12,9 @@ module.exports.sendResetLink = async (data)=>{
 
     // SEND MAIL
     transporter.sendMail({
-        from: 'Auth <auth@gmail.com>',
+        from: 'Auth',
         to: data.email,
-        subject: 'First Mail',
+        subject: 'Password Reset Link',
         html: passwordResetTemplate
     }, (err, info)=>{
         if(err){
